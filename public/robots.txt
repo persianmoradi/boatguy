@@ -1,0 +1,21 @@
+# TheBoatGuy.dk: search engines and AI assistants are welcome to read and cite this site.
+# The named AI crawlers share this group so they get the same rules (a separate group would drop the /api/ rule).
+User-agent: *
+User-agent: Googlebot
+User-agent: Bingbot
+User-agent: GPTBot
+User-agent: OAI-SearchBot
+User-agent: ChatGPT-User
+User-agent: ClaudeBot
+User-agent: Claude-SearchBot
+User-agent: Claude-User
+User-agent: PerplexityBot
+User-agent: Perplexity-User
+User-agent: Google-Extended
+User-agent: Applebot
+User-agent: Applebot-Extended
+User-agent: DuckAssistBot
+Allow: /
+Disallow: /api/
+
+Sitemap: https://theboatguy.dk/sitemap.xml

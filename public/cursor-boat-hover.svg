@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+  <!-- over links: the boat brightens and a small glint appears; same click point (5,2) -->
+  <g stroke="#041c3d" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round">
+    <path d="M5 2 C9.5 7.5 13.5 13.5 15 20 L5 20 Z" fill="#f4e3b4"/>
+    <path d="M2 22.5 H27 C25.2 26 22.6 27.5 18.8 27.5 H6.2 C4.4 27.5 2.9 25.6 2 22.5 Z" fill="#e8d4a2"/>
+  </g>
+  <path d="M24 6 L25 9 L28 10 L25 11 L24 14 L23 11 L20 10 L23 9 Z" fill="#c9a24b" stroke="#041c3d" stroke-width="0.8" stroke-linejoin="round"/>
+  <path d="M3 30.5 C7 29 10.5 29 14.5 30.5 S22 32 27 30.5" fill="none" stroke="#e8d4a2" stroke-width="1.4" stroke-linecap="round"/>
+</svg>

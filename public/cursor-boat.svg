@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+  <!-- sail tip at (5,2) is the click point -->
+  <g stroke="#041c3d" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round">
+    <path d="M5 2 C9.5 7.5 13.5 13.5 15 20 L5 20 Z" fill="#c9a24b"/>
+    <path d="M2 22.5 H27 C25.2 26 22.6 27.5 18.8 27.5 H6.2 C4.4 27.5 2.9 25.6 2 22.5 Z" fill="#c9a24b"/>
+  </g>
+  <path d="M3 30.5 C7 29 10.5 29 14.5 30.5 S22 32 27 30.5" fill="none" stroke="#c9a24b" stroke-width="1.4" stroke-linecap="round"/>
+</svg>

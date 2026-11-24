@@ -1,0 +1,432 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Btn from '../../components/Btn.astro';
+import BeforeAfter from '../../components/BeforeAfter.astro';
+import Ph from '../../components/Ph.astro';
+import Icon from '../../components/Icon.astro';
+import { languages, type Lang } from '../../i18n/ui';
+import { home, PHONE, PHONE_HREF, EMAIL, ADDRESS, INSTAGRAM_URL, FACEBOOK_URL, TRUSTPILOT_URL } from '../../i18n/home';
+
+export const getStaticPaths = () => languages.map((lang) => ({ params: { lang } }));
+const lang = Astro.params.lang as Lang;
+const c = home[lang];
+const q = c.quote;
+const addressLine = `${ADDRESS.street}, ${ADDRESS.postalCode} ${ADDRESS.city}`;
+// CLIENT SLOT: each pair is a placeholder until the client's own photos arrive.
+const work = c.work.projects.map((title) => ({ title, before: '/placeholders/before.svg', after: '/placeholders/after.svg' }));
+const textFields = [
+  ['name', 'text', true, 'name'],
+  ['email', 'email', true, 'email'],
+  ['phone', 'tel', false, 'tel'],
+  ['model', 'text', false, 'off'],
+  ['length', 'text', true, 'off'],
+  ['location', 'text', true, 'off'],
+] as const;
+const sideRows = [
+  ['phone', PHONE, PHONE_HREF],
+  ['mail', EMAIL, `mailto:${EMAIL}`],
+  ['pin', addressLine, ''],
+  ['clock', c.footer.hours, ''],
+] as const;
+---
+<Layout lang={lang}>
+  <!-- ================= HERO ================= -->
+  <section class="bg-gradient-to-b from-blue-50 to-paper pb-[var(--sec-y)] pt-[calc(var(--header-h)+40px)] md:pt-[calc(var(--header-h)+64px)] lg:pt-[calc(var(--header-h)+88px)]" aria-labelledby="hero-h1">
+    <div class="wrap grid gap-10 lg:grid-cols-12 lg:gap-x-12">
+      <div class="lg:col-span-7 lg:row-start-1">
+        <p class="t-eyebrow">{c.hero.eyebrow}</p>
+        <h1 id="hero-h1" class="t-hero mt-4">
+          <span class="block">{c.hero.lines[0]}</span>
+          <span class="block">{c.hero.lines[1]}</span>
+          <span class="block text-blue-600">{c.hero.lines[2]}</span>
+        </h1>
+        <p class="t-lead mt-5 max-w-[60ch]">{c.hero.intro}</p>
+
+        <form class="card mt-8 max-w-[640px] md:max-w-none" data-quick novalidate aria-labelledby="quick-h">
+          <p id="quick-h" class="t-h3">{c.hero.card.title}</p>
+          <div class="mt-4 grid gap-3 sm:grid-cols-3 xl:grid-cols-[1.5fr_1fr_1fr_auto]">
+            <div class="sm:col-span-3 xl:col-span-1">
+              <label for="qk-model" class="label">{c.hero.card.model}</label>
+              <input id="qk-model" name="model" type="text" autocomplete="off" enterkeyhint="next" class="field" />
+            </div>
+            <div>
+              <label for="qk-length" class="label">{c.hero.card.length}</label>
+              <input id="qk-length" name="length" type="text" inputmode="decimal" autocomplete="off" enterkeyhint="next" class="field" />
+            </div>
+            <div>
+              <label for="qk-postcode" class="label">{c.hero.card.postcode}</label>
+              <input id="qk-postcode" name="postcode" type="text" inputmode="numeric" autocomplete="postal-code" enterkeyhint="go" class="field" />
+            </div>
+            <div class="flex items-end sm:col-span-3 xl:col-span-1"><Btn type="submit" label={c.hero.card.go} arrow class="w-full" /></div>
+          </div>
+          <p class="t-small mt-3 text-muted">{c.hero.card.hint}</p>
+        </form>
+      </div>
+
+      <div class="lg:col-span-5 lg:row-span-1 lg:row-start-1" data-fade>
+        <Ph ratio="4/3" label={c.hero.photo} class="max-md:max-h-[320px] md:!aspect-[16/9] lg:!aspect-auto lg:h-full lg:min-h-[420px] !rounded-[24px] w-full" />
+      </div>
+
+      <dl class="grid grid-cols-2 gap-x-6 gap-y-6 border-t border-line pt-8 lg:col-span-12 lg:grid-cols-4 lg:gap-0">
+        {c.hero.facts.map(([k, v], i) => (
+          <div class:list={['lg:px-6', i === 0 ? 'lg:pl-0' : 'lg:border-l lg:border-line']}>
+            <dt class="t-h3">{k}</dt>
+            <dd class="t-small mt-1 text-muted">{v}</dd>
+          </div>
+        ))}
+      </dl>
+    </div>
+  </section>
+
+  <!-- ================= SERVICES ================= -->
+  <section id="services" class="section bg-white" aria-labelledby="services-h2">
+    <div class="wrap">
+      <div data-reveal>
+        <p class="t-eyebrow">{c.services.label}</p>
+        <h2 id="services-h2" class="t-h2 mt-3 max-w-[22ch]">{c.services.h2}</h2>
+        <p class="t-lead mt-4">{c.services.lead}</p>
+      </div>
+      <ul class="mt-10 grid gap-5 sm:grid-cols-2 md:mt-12 lg:grid-cols-3 lg:gap-6">
+        {c.services.items.map((s, i) => (
+          <li class="card card-hover" data-reveal style={`--i:${i % 3}`}>
+            <span class="icon-tile"><Icon name={s.key} /></span>
+            <h3 class="t-h3 mt-5">{s.title}</h3>
+            <p class="mt-2 text-[0.9375rem] leading-relaxed text-muted">{s.text}</p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <!-- ================= PROCESS + HOW WE PRICE ================= -->
+  <section id="process" class="section" aria-labelledby="process-h2">
+    <div class="wrap">
+      <div data-reveal>
+        <p class="t-eyebrow">{c.process.label}</p>
+        <h2 id="process-h2" class="t-h2 mt-3 max-w-[22ch]">{c.process.h2}</h2>
+      </div>
+      <ol class="mt-10 grid gap-5 sm:grid-cols-2 md:mt-12 min-[1100px]:grid-cols-4 lg:gap-6">
+        {c.process.steps.map(([title, text], i) => (
+          <li class="card" data-reveal style={`--i:${i}`}>
+            <span class="grid h-8 w-8 place-items-center rounded-full border border-blue-600 bg-blue-50 text-sm font-semibold text-blue-600">0{i + 1}</span>
+            <h3 class="t-h3 mt-4">{title}</h3>
+            <p class="mt-2 text-[0.9375rem] leading-relaxed text-muted">{text}</p>
+          </li>
+        ))}
+      </ol>
+      <div class="card mt-6 grid gap-6 border-l-4 border-l-blue-600 md:grid-cols-[1fr_auto] md:items-center" data-reveal>
+        <div class="flex gap-4">
+          <span class="icon-tile shrink-0"><Icon name="receipt" /></span>
+          <div>
+            <h3 class="t-h3">{c.process.priceTitle}</h3>
+            <p class="t-lead mt-2">{c.process.price}</p>
+          </div>
+        </div>
+        <Btn href="#contact" variant="secondary" label={c.process.priceCta} arrow class="w-full md:w-auto" />
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= WORK ================= -->
+  <section id="work" class="section bg-white" aria-labelledby="work-h2">
+    <div class="wrap">
+      <div data-reveal>
+        <p class="t-eyebrow">{c.work.label}</p>
+        <h2 id="work-h2" class="t-h2 mt-3">{c.work.h2}</h2>
+        <p class="t-lead mt-4">{c.work.lead}</p>
+      </div>
+      <ul class="mt-10 grid gap-6 md:mt-12 md:grid-cols-2">
+        {work.map((w, i) => (
+          <li data-reveal style={`--i:${i}`}>
+            <BeforeAfter before={w.before} after={w.after} beforeAlt={c.work.placeholderAlt[0]} afterAlt={c.work.placeholderAlt[1]} beforeLabel={c.work.before} afterLabel={c.work.after} compareLabel={`${c.work.compare}: ${w.title}`} class="aspect-[4/3]" />
+            <p class="t-h3 mt-4">{w.title}</p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <!-- ================= REVIEWS ================= -->
+  <section id="reviews" class="bg-blue-50 py-14 md:py-[72px]" aria-labelledby="reviews-h2">
+    <div class="wrap text-center" data-reveal>
+      <p class="t-eyebrow justify-center">{c.reviews.label}</p>
+      <h2 id="reviews-h2" class="t-h2 mt-3">{c.reviews.h2}</h2>
+      <div class="card mx-auto mt-8 max-w-[560px]">
+        <div class="flex justify-center gap-1 text-blue-600">{[0, 1, 2, 3, 4].map(() => <Icon name="star" size={22} />)}</div>
+        <h3 class="t-h3 mt-4">{c.reviews.title}</h3>
+        <p class="mt-2 text-muted">{c.reviews.text}</p>
+        {TRUSTPILOT_URL
+          ? <Btn href={TRUSTPILOT_URL} rel="noopener" variant="secondary" label={c.reviews.open} class="mt-5" />
+          : <span class="mt-5 inline-flex min-h-11 items-center rounded-full border border-line bg-paper px-5 text-sm font-semibold text-muted">Trustpilot</span>}
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= ABOUT ================= -->
+  <section id="about" class="section bg-white" aria-labelledby="about-h2">
+    <div class="wrap grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
+      <div data-reveal>
+        <p class="t-eyebrow">{c.about.label}</p>
+        <h2 id="about-h2" class="t-h2 mt-3">{c.about.h2}</h2>
+        <p class="t-lead mt-5">{c.about.text}</p>
+        <ul class="mt-6 flex flex-wrap gap-2">
+          {c.about.areas.map((a) => <li class="rounded-full border border-line px-4 py-2 text-sm font-medium">{a}</li>)}
+        </ul>
+      </div>
+      <div class="grid grid-cols-2 gap-4 md:gap-6" data-reveal>
+        <Ph ratio="4/5" label={c.about.photo} class="!rounded-[20px]" />
+        <Ph ratio="4/5" label={c.about.photo} class="!rounded-[20px] md:mt-6" />
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= FAQ ================= -->
+  <section id="faq" class="section" aria-labelledby="faq-h2">
+    <div class="wrap-narrow">
+      <div data-reveal>
+        <p class="t-eyebrow">{c.faq.label}</p>
+        <h2 id="faq-h2" class="t-h2 mt-3">{c.faq.h2}</h2>
+      </div>
+      <div class="mt-8 space-y-3 md:mt-10">
+        {c.faq.items.map(([question, answer], i) => (
+          <details class="faq-item" data-reveal style={`--i:${Math.min(i, 5)}`}>
+            <summary>{question}<Icon name="chevron" size={20} /></summary>
+            <p class="px-5 pb-5 text-muted">{answer}</p>
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= CONTACT ================= -->
+  <section id="contact" class="section bg-gradient-to-b from-blue-50 to-paper" aria-labelledby="contact-h2">
+    <div class="wrap">
+      <div data-reveal>
+        <p class="t-eyebrow">{q.label}</p>
+        <h2 id="contact-h2" class="t-h2 mt-3">{q.h2}</h2>
+        <p class="t-lead mt-4">{q.lead}</p>
+      </div>
+      <div class="mt-10 grid gap-6 lg:grid-cols-12 lg:items-start">
+        <form class="relative rounded-[24px] border border-line bg-white p-5 shadow-[var(--shadow-card)] sm:p-8 lg:col-span-7 lg:p-10" action="/api/quote" method="post" enctype="multipart/form-data" novalidate data-quote
+          data-lang={lang} data-email={EMAIL} data-subject={q.subject} data-errors={JSON.stringify(q.errors)} data-msgs={JSON.stringify({ sending: q.sending, fail: q.fail, fallback: q.fallback, remove: q.remove })}>
+          <input type="hidden" name="lang" value={lang} />
+          <!-- spam trap: hidden from people, filled in by bots -->
+          <div class="absolute -left-[9999px] h-px w-px overflow-hidden" aria-hidden="true"><label>Company <input type="text" name="company" tabindex="-1" autocomplete="off" /></label></div>
+
+          <div data-quote-body>
+            <div class="grid gap-x-5 gap-y-5 sm:grid-cols-2">
+              {textFields.map(([key, type, req, ac]) => (
+                <div>
+                  <label for={`q-${key}`} class="label">{q.fields[key]}{req && <span class="text-red-600" aria-hidden="true"> *</span>}</label>
+                  <input id={`q-${key}`} name={key} type={type} required={req} aria-required={req ? 'true' : undefined} autocomplete={ac}
+                    autocapitalize={key === 'name' ? 'words' : key === 'email' ? 'none' : undefined} inputmode={key === 'email' ? 'email' : key === 'phone' ? 'tel' : key === 'length' ? 'decimal' : undefined}
+                    enterkeyhint="next" class="field" aria-describedby={`q-${key}-err`} />
+                  <p id={`q-${key}-err`} class="err" data-err-for={key} aria-live="polite"></p>
+                </div>
+              ))}
+            </div>
+
+            <fieldset class="mt-6" aria-describedby="q-services-err">
+              <legend class="label">{q.services}<span class="text-red-600" aria-hidden="true"> *</span></legend>
+              <div class="mt-2 grid gap-2 sm:grid-cols-2">
+                {c.services.items.map((s) => (
+                  <label class="chip"><input class="sr-only" type="checkbox" name="services" value={s.key} /><span class="tick" aria-hidden="true"><Icon name="check" size={14} /></span>{s.title}</label>
+                ))}
+              </div>
+              <p id="q-services-err" class="err" data-err-for="services" aria-live="polite"></p>
+            </fieldset>
+
+            <fieldset class="mt-6">
+              <legend class="label">{q.condition}</legend>
+              <div class="mt-2 grid grid-cols-3 gap-2">
+                {(Object.entries(q.conditions) as [string, string][]).map(([v, label]) => (
+                  <label class="chip chip-pill"><input class="sr-only" type="radio" name="condition" value={v} checked={v === 'average'} />{label}</label>
+                ))}
+              </div>
+            </fieldset>
+
+            <div class="mt-6">
+              <label for="q-message" class="label">{q.fields.message}</label>
+              <textarea id="q-message" name="message" rows="4" enterkeyhint="send" autocapitalize="sentences" class="field"></textarea>
+            </div>
+
+            <div class="mt-6">
+              <label for="q-photos" class="flex min-h-28 cursor-pointer flex-col items-center justify-center gap-1 rounded-2xl border border-dashed border-line px-6 py-6 text-center transition-colors hover:border-blue-600 hover:bg-blue-50 has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-blue-600">
+                <span class="t-h3">{q.photos}</span>
+                <span class="text-sm text-muted">{q.photosHint}</span>
+                <input id="q-photos" name="photos" type="file" accept="image/*,.heic,.heif" multiple class="sr-only" aria-describedby="q-photos-err" />
+              </label>
+              <ul class="mt-3 flex flex-wrap gap-3" data-photo-list></ul>
+              <p id="q-photos-err" class="err" data-err-for="photos" aria-live="polite"></p>
+            </div>
+
+            <div class="mt-8 flex flex-wrap items-center gap-4">
+              <Btn type="submit" label={q.submit} arrow class="w-full sm:w-auto" />
+              <p class="text-sm text-muted" role="status" data-quote-status></p>
+            </div>
+          </div>
+
+          <!-- shown after a successful send -->
+          <div class="hidden py-10 text-center" tabindex="-1" data-quote-done>
+            <span class="icon-tile mx-auto"><Icon name="check" /></span>
+            <p class="t-h3 mt-6">{q.success}</p>
+            <p class="mx-auto mt-3 max-w-md text-muted">{q.successLead}</p>
+          </div>
+        </form>
+
+        <aside class="on-dark rounded-[24px] bg-navy-950 p-6 text-white sm:p-8 lg:col-span-5" aria-labelledby="side-h">
+          <h3 id="side-h" class="t-h3">{q.side.title}</h3>
+          <ul class="mt-5">
+            {sideRows.map(([icon, text, href]) => (
+              <li class="flex min-h-11 items-center gap-3 py-2">
+                <Icon name={icon} size={20} class="shrink-0 text-blue-400" />
+                {href ? <a href={href} class="break-words underline-offset-4 hover:underline">{text}</a> : <span>{text}</span>}
+              </li>
+            ))}
+          </ul>
+          <ul class="mt-6 flex gap-3">
+            {[['instagram', 'Instagram', INSTAGRAM_URL], ['facebook', 'Facebook', FACEBOOK_URL]].map(([icon, name, href]) => (
+              <li><a href={href} target="_blank" rel="noopener" aria-label={name} class="grid h-11 w-11 place-items-center rounded-full bg-white/15 hover:bg-white/25"><Icon name={icon as 'instagram'} size={20} /></a></li>
+            ))}
+          </ul>
+        </aside>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<script>
+  // Quote form: the same checks the server runs, then POST to /api/quote (with photos).
+  // Offline, timeout or 503 (email not wired up yet) hands the message to the visitor's mail app.
+  import { validateQuote, FILE_LIMITS } from '../../lib/quote';
+
+  const form = document.querySelector<HTMLFormElement>('[data-quote]');
+  if (form) {
+    const errText: Record<string, string> = JSON.parse(form.dataset.errors!);
+    const msg: Record<string, string> = JSON.parse(form.dataset.msgs!);
+    const $ = <T extends Element = HTMLElement>(s: string) => form.querySelector<T>(s)!;
+    const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const fieldsOf = (fd: FormData) => Object.fromEntries([...new Set(fd.keys())].map((k) => [k, k === 'services' ? fd.getAll(k) : fd.get(k)]));
+
+    // ---- photos: kept in our own list so one can be removed
+    const fileInput = $<HTMLInputElement>('#q-photos');
+    const list = $('[data-photo-list]');
+    let files: File[] = [];
+    const renderFiles = () =>
+      list.replaceChildren(
+        ...files.map((f, i) => {
+          const li = document.createElement('li');
+          li.className = 'relative h-24 w-24 overflow-hidden rounded-xl bg-surface';
+          const img = document.createElement('img');
+          img.src = URL.createObjectURL(f);
+          img.alt = f.name;
+          img.className = 'h-full w-full object-cover';
+          img.onload = () => URL.revokeObjectURL(img.src);
+          const rm = document.createElement('button');
+          rm.type = 'button';
+          // a 44px touch target around a smaller visible button
+          rm.className = 'absolute right-0 top-0 grid h-11 w-11 place-items-center';
+          rm.setAttribute('aria-label', `${msg.remove} ${f.name}`);
+          rm.innerHTML = '<span class="grid h-6 w-6 place-items-center rounded-full bg-navy-950 text-sm text-white" aria-hidden="true">×</span>';
+          rm.onclick = () => {
+            files.splice(i, 1);
+            showErrors(validateQuote({}, files).errors, ['photos']);
+            renderFiles();
+          };
+          li.append(img, rm);
+          return li;
+        }),
+      );
+    fileInput.addEventListener('change', () => {
+      // each photo is checked as it is picked; a refused one is dropped and the reason shown
+      const picked = [...fileInput.files!];
+      fileInput.value = '';
+      let err = '';
+      for (const f of picked) {
+        const typeOk = FILE_LIMITS.types.includes(f.type) || (f.type === '' && /\.(heic|heif)$/i.test(f.name));
+        if (!typeOk) err = 'fileType';
+        else if (f.size > FILE_LIMITS.eachBytes) err = 'fileSize';
+        else if (files.length >= FILE_LIMITS.count) err = 'files';
+        else files.push(f);
+      }
+      showErrors(err ? { photos: err } : {}, ['photos']);
+      renderFiles();
+    });
+
+    // ---- errors under their fields (aria-live on each message, set in the markup)
+    function showErrors(errors: Record<string, string>, only?: string[]) {
+      form!.querySelectorAll<HTMLElement>('[data-err-for]').forEach((p) => {
+        const key = p.dataset.errFor!;
+        if (only && !only.includes(key)) return;
+        p.textContent = errors[key] ? errText[errors[key]] : '';
+        form!.querySelector(`[name="${key}"]`)?.setAttribute('aria-invalid', String(!!errors[key]));
+      });
+    }
+
+    // ---- send
+    const status = $('[data-quote-status]');
+    const submit = $<HTMLButtonElement>('button[type="submit"]');
+    let sending = false;
+    const mailto = () => {
+      const d = validateQuote(fieldsOf(new FormData(form)), files).data;
+      const text = [`${d.name} · ${d.email} · ${d.phone}`, `${d.length} m ${d.model}`, `${d.condition} · ${d.location}`, d.services.join(', '), d.message].join('\n');
+      return `mailto:${form.dataset.email}?subject=${encodeURIComponent(form.dataset.subject!)}&body=${encodeURIComponent(text)}`;
+    };
+    form.addEventListener('submit', async (ev) => {
+      ev.preventDefault();
+      if (sending) return; // a second tap while the first is on its way
+      const fd = new FormData(form);
+      fd.delete('photos');
+      files.forEach((f) => fd.append('photos', f));
+      const check = validateQuote(fieldsOf(fd), files);
+      showErrors(check.errors);
+      if (!check.ok) {
+        // first error in page order, not in validation order
+        const first = [...form.querySelectorAll<HTMLElement>('[data-err-for]')].find((p) => p.textContent)!;
+        const target = form.querySelector<HTMLElement>(`[name="${first.dataset.errFor}"]`) ?? first;
+        target.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'center' });
+        target.focus({ preventScroll: true });
+        return;
+      }
+
+      sending = true;
+      submit.disabled = true;
+      form.setAttribute('aria-busy', 'true');
+      status.textContent = msg.sending;
+      try {
+        const res = await fetch(form.action, { method: 'POST', body: fd, signal: AbortSignal.timeout?.(60000) });
+        if (res.ok) {
+          $('[data-quote-body]').classList.add('hidden');
+          const done = $('[data-quote-done]');
+          done.classList.remove('hidden');
+          done.focus({ preventScroll: true });
+          form.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' });
+          return;
+        }
+        const body = await res.json().catch(() => ({}));
+        if (res.status === 422) {
+          showErrors(body.errors ?? {});
+          status.textContent = '';
+        } else if (res.status === 503) {
+          // email is not wired up yet: hand the message to the visitor's mail app instead
+          status.textContent = msg.fallback;
+          location.href = mailto();
+        } else {
+          status.textContent = msg.fail;
+        }
+      } catch {
+        // offline, dropped connection or timeout: say so, and offer the message by email instead
+        const a = document.createElement('a');
+        a.href = mailto();
+        // msg.fail already names the address, so the whole sentence becomes the mailto link
+        a.textContent = msg.fail;
+        a.className = 'link';
+        status.replaceChildren(a);
+      } finally {
+        sending = false;
+        submit.disabled = false;
+        form.removeAttribute('aria-busy');
+      }
+    });
+  }
+</script>

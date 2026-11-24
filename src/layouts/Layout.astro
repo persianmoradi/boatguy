@@ -1,0 +1,189 @@
+---
+import '../styles/global.css';
+import Btn from '../components/Btn.astro';
+import { type Lang } from '../i18n/ui';
+import Icon from '../components/Icon.astro';
+import { home, PHONE, PHONE_HREF, EMAIL, ADDRESS, HOURS, INSTAGRAM_URL, FACEBOOK_URL, TRUSTPILOT_URL, CVR } from '../i18n/home';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const c = home[lang];
+const other = lang === 'da' ? 'en' : 'da';
+const path = Astro.url.pathname.replace(/^\/(da|en)/, '');
+const site = 'https://theboatguy.dk';
+const canonical = `${site}/${lang}${path}`;
+const image = `${site}/logo.png`;
+// Areas served: as on the existing site.
+const areaServed = [
+  { '@type': 'Country', name: 'Denmark' },
+  { '@type': 'Place', name: 'South Sweden' },
+  { '@type': 'Place', name: 'North Germany' },
+];
+// One linked schema.org graph: the site, the business and its services, this page, and the FAQ shown on it.
+const structuredData = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    { '@type': 'WebSite', '@id': `${site}/#website`, url: site, name: 'TheBoatGuy.dk', inLanguage: ['da', 'en'], publisher: { '@id': `${site}/#business` } },
+    {
+      '@type': 'ProfessionalService',
+      '@id': `${site}/#business`,
+      name: 'TheBoatGuy.dk',
+      alternateName: ['TheBoatGuy', 'The Boat Guy'],
+      url: site,
+      logo: image,
+      image,
+      description: c.meta.description,
+      email: EMAIL,
+      telephone: '+4591467978',
+      address: { '@type': 'PostalAddress', streetAddress: ADDRESS.street, postalCode: ADDRESS.postalCode, addressLocality: ADDRESS.city, addressCountry: ADDRESS.country },
+      openingHoursSpecification: { '@type': 'OpeningHoursSpecification', dayOfWeek: HOURS.days, opens: HOURS.opens, closes: HOURS.closes },
+      knowsLanguage: ['da', 'en'],
+      areaServed,
+      contactPoint: { '@type': 'ContactPoint', contactType: 'customer service', telephone: '+4591467978', email: EMAIL, availableLanguage: ['Danish', 'English'], areaServed },
+      hasOfferCatalog: {
+        '@type': 'OfferCatalog',
+        name: c.services.h2,
+        itemListElement: c.services.items.map((s) => ({ '@type': 'Offer', itemOffered: { '@type': 'Service', name: s.title, description: s.text, areaServed, provider: { '@id': `${site}/#business` } } })),
+      },
+      sameAs: [INSTAGRAM_URL, FACEBOOK_URL, ...(TRUSTPILOT_URL ? [TRUSTPILOT_URL] : [])],
+    },
+    { '@type': 'WebPage', '@id': `${canonical}#webpage`, url: canonical, name: c.meta.title, description: c.meta.description, inLanguage: lang, isPartOf: { '@id': `${site}/#website` }, about: { '@id': `${site}/#business` }, primaryImageOfPage: image },
+    { '@type': 'FAQPage', '@id': `${canonical}#faq`, inLanguage: lang, mainEntity: c.faq.items.map(([q, a]) => ({ '@type': 'Question', name: q, acceptedAnswer: { '@type': 'Answer', text: a } })) },
+  ],
+};
+const links = [
+  ['#services', c.nav.services],
+  ['#process', c.nav.process],
+  ['#work', c.nav.work],
+  ['#about', c.nav.about],
+  ['#faq', c.nav.faq],
+  ['#contact', c.nav.contact],
+] as const;
+const langHref = `/${other}${path}`;
+const social = [['instagram', 'Instagram', INSTAGRAM_URL], ['facebook', 'Facebook', FACEBOOK_URL]] as const;
+---
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{c.meta.title}</title>
+    <meta name="description" content={c.meta.description} />
+    <meta name="theme-color" content="#05152e" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
+    <link rel="canonical" href={canonical} />
+    <link rel="alternate" hreflang="da" href={`${site}/da${path}`} />
+    <link rel="alternate" hreflang="en" href={`${site}/en${path}`} />
+    <link rel="alternate" hreflang="x-default" href={`${site}/da${path}`} />
+    <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="TheBoatGuy.dk" />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:title" content={c.meta.title} />
+    <meta property="og:description" content={c.meta.description} />
+    <meta property="og:image" content={image} />
+    <meta property="og:image:alt" content="TheBoatGuy.dk" />
+    <meta property="og:locale" content={lang === 'da' ? 'da_DK' : 'en_GB'} />
+    <meta property="og:locale:alternate" content={lang === 'da' ? 'en_GB' : 'da_DK'} />
+    <meta name="twitter:card" content="summary" />
+    <link rel="icon" href="/mark.png" type="image/png" />
+    <link rel="apple-touch-icon" href="/mark.png" />
+    <!-- js: lets CSS hide reveal targets only when the motion script will run -->
+    <script is:inline>document.documentElement.classList.add('js')</script>
+    <!-- without scripts the menu button does nothing: hide it; the footer lists every section -->
+    <noscript><style>[data-menu-toggle]{display:none!important}</style></noscript>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600&display=swap" rel="stylesheet" />
+    <script type="application/ld+json" set:html={JSON.stringify(structuredData)} />
+  </head>
+  <body id="top">
+    <a href="#main" class="skip">{c.skip}</a>
+
+    <header class="header on-dark fixed inset-x-0 top-0 z-50 pl-[env(safe-area-inset-left)] pr-[env(safe-area-inset-right)] pt-[env(safe-area-inset-top)] text-white" data-header>
+      <div class="wrap flex h-[var(--header-h)] items-center gap-3 min-[1100px]:gap-6">
+        <a href="#top" class="block h-[var(--header-h)] w-[var(--header-h)] shrink-0" aria-label="TheBoatGuy.dk">
+          <img src="/logo.png" alt="" width="144" height="144" class="h-full w-full object-cover" />
+        </a>
+        <nav class="hidden flex-1 items-center justify-center gap-[clamp(14px,1.6vw,28px)] min-[1100px]:flex" aria-label={c.mainNav}>
+          {links.map(([href, label]) => <a href={href} class="nav-link">{label}</a>)}
+        </nav>
+        <a href={PHONE_HREF} class="ml-auto hidden min-h-11 items-center gap-2 text-sm font-medium text-white/90 hover:text-white min-[1100px]:ml-0 min-[1100px]:flex" aria-label={PHONE}>
+          <Icon name="phone" size={20} /><span class="hidden min-[1280px]:inline">{PHONE}</span>
+        </a>
+        <span class="lang-pill hidden min-[1100px]:inline-flex" translate="no">
+          <span aria-current="true" lang={lang}>{lang.toUpperCase()}</span>
+          <a href={langHref} hreflang={other} lang={other} aria-label={other === 'en' ? 'English' : 'Dansk'}>{other.toUpperCase()}</a>
+        </span>
+        <Btn href="#contact" label={c.cta} class="btn-sm ml-auto min-[1100px]:ml-0 max-sm:px-4" />
+        <button type="button" class="relative grid h-11 w-11 shrink-0 place-items-center rounded-lg min-[1100px]:hidden" aria-expanded="false" aria-controls="menu" aria-label={c.menu} data-menu-toggle data-label={c.menu} data-open-label={c.menuClose}>
+          <span class="burger relative block h-[14px] w-6" aria-hidden="true"><span></span><span></span></span>
+        </button>
+      </div>
+    </header>
+
+    <!-- mobile menu: slides in under the header; inert while closed -->
+    <div id="menu" class="menu on-dark" inert data-menu>
+      <nav class="wrap flex min-h-full flex-col pb-[calc(24px+env(safe-area-inset-bottom))] pt-2" aria-label={c.mainNav}>
+        {links.map(([href, label]) => (
+          <a href={href} class="flex min-h-14 items-center border-b border-hair-d text-lg font-medium" data-menu-link>{label}</a>
+        ))}
+        <div class="mt-6 flex flex-wrap items-center justify-between gap-4">
+          <a href={PHONE_HREF} class="inline-flex min-h-11 items-center gap-2 font-medium"><Icon name="phone" size={20} />{PHONE}</a>
+          <span class="lang-pill" translate="no">
+            <span aria-current="true" lang={lang}>{lang.toUpperCase()}</span>
+            <a href={langHref} hreflang={other} lang={other} aria-label={other === 'en' ? 'English' : 'Dansk'}>{other.toUpperCase()}</a>
+          </span>
+        </div>
+        <Btn href="#contact" label={c.cta} arrow class="mt-6 min-h-14 w-full" />
+      </nav>
+    </div>
+
+    <main id="main">
+      <slot />
+    </main>
+
+    <footer class="on-dark bg-navy-950 pt-12 text-white max-sm:pb-[env(safe-area-inset-bottom)]" aria-label="TheBoatGuy.dk">
+      <div class="wrap">
+        <div class="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
+          <div>
+            <img src="/logo.png" alt="TheBoatGuy.dk" width="144" height="144" class="h-[72px] w-[72px]" />
+            <p class="mt-4 max-w-[28ch] text-sm text-white/75">{c.footer.tagline}</p>
+          </div>
+          <div>
+            <p class="text-sm font-semibold">{c.footer.contact}</p>
+            <ul class="mt-3 space-y-1 text-sm text-white/75">
+              <li class="py-2">{ADDRESS.street}, {ADDRESS.postalCode} {ADDRESS.city}</li>
+              <li class="py-2">{c.footer.hours}</li>
+              <li><a class="inline-flex min-h-11 items-center hover:text-white" href={PHONE_HREF}>{PHONE}</a></li>
+              <li><a class="inline-flex min-h-11 items-center break-all hover:text-white" href={`mailto:${EMAIL}`}>{EMAIL}</a></li>
+            </ul>
+          </div>
+          <div>
+            <p class="text-sm font-semibold">{c.footer.menu}</p>
+            <ul class="mt-3 text-sm text-white/75">
+              {links.map(([href, label]) => <li><a href={href} class="inline-flex min-h-11 items-center hover:text-white">{label}</a></li>)}
+            </ul>
+          </div>
+          <div>
+            <p class="text-sm font-semibold">{c.footer.social}</p>
+            <ul class="mt-3 flex gap-3">
+              {social.map(([icon, name, href]) => (
+                <li><a href={href} target="_blank" rel="noopener" aria-label={name} class="grid h-11 w-11 place-items-center rounded-full bg-white/15 hover:bg-white/25"><Icon name={icon} size={20} /></a></li>
+              ))}
+            </ul>
+            <p class="mt-5 text-sm"><a href={langHref} hreflang={other} lang={other} class="inline-flex min-h-11 items-center text-white/75 hover:text-white">{other === 'en' ? 'English' : 'Dansk'}</a></p>
+          </div>
+        </div>
+        <div class="mt-10 flex flex-wrap items-center justify-between gap-x-6 border-t border-hair-d py-5 text-sm text-white/65">
+          <p>© 2026 TheBoatGuy.dk · {CVR ? `CVR: ${CVR}` : c.footer.cvr}</p>
+          <a href="#top" class="inline-flex min-h-11 items-center hover:text-white">{c.footer.top} ↑</a>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      import '../scripts/motion';
+    </script>
+  </body>
+</html>

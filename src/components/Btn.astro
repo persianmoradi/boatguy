@@ -1,0 +1,19 @@
+---
+import Icon from './Icon.astro';
+// One button look: primary (red, quote CTAs only) | secondary | ghost (on navy).
+interface Props {
+  href?: string;
+  variant?: 'primary' | 'secondary' | 'ghost';
+  label: string;
+  arrow?: boolean;
+  type?: 'submit' | 'button';
+  class?: string;
+  rel?: string;
+}
+const { href, variant = 'primary', label, arrow = false, type = 'button', class: cls = '', rel } = Astro.props;
+const Tag = href ? 'a' : 'button';
+---
+<Tag href={href} type={href ? undefined : type} rel={rel} class:list={['btn', variant === 'ghost' ? 'border border-white/35 text-white hover:bg-white/10' : `btn-${variant}`, cls]}>
+  <span>{label}</span>
+  {arrow && <Icon name="arrow" size={18} />}
+</Tag>

@@ -1,0 +1,12 @@
+---
+// Placeholder frame for a photograph that has not arrived yet.
+// CLIENT SLOT: replace the <Ph> with an <img> of the same aspect ratio.
+interface Props { ratio: string; label: string; class?: string; [key: string]: unknown }
+const { ratio, label, class: cls = '', ...rest } = Astro.props;
+---
+<div class:list={['ph', cls]} style={`aspect-ratio:${ratio}`} role="img" aria-label={label} {...rest}>
+  <img src="/placeholders/ph-paper.svg" alt="" width="1200" height="1200" loading="lazy" decoding="async" class="absolute inset-0 h-full w-full object-cover" />
+  <span class="tick-tl" aria-hidden="true"></span>
+  <span class="tick-br" aria-hidden="true"></span>
+  <span class="ph-label" aria-hidden="true">{label}</span>
+</div>

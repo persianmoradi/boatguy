@@ -1,0 +1,25 @@
+---
+// Inline line icons, 24x24, stroke currentColor. Decorative: callers label the control, not the icon.
+const paths = {
+  polish: 'M12 3l1.8 4.7L18.5 9.5l-4.7 1.8L12 16l-1.8-4.7L5.5 9.5l4.7-1.8z M19 15v4 M17 17h4',
+  fullBottom: 'M3 11h18l-2.5 7h-13z M6 8h12 M9 5h6',
+  antifouling: 'M5 4h12v5H5z M17 6.5h2.5v5H11v3 M10 14.5h2V20h-2z',
+  interior: 'M5 11V8a2 2 0 012-2h10a2 2 0 012 2v3 M3 13a2 2 0 014 0v1h10v-1a2 2 0 014 0v4H3z M6 17v2 M18 17v2',
+  exterior: 'M12 3.5s5 5.2 5 9a5 5 0 01-10 0c0-3.8 5-9 5-9z M4 21c2-1.5 4-1.5 6 0s4 1.5 6 0 3-1 4-.5',
+  teak: 'M3 8h18v8H3z M7 8v8 M3 12h4 M11 8v8 M15 8v8 M11 12h4',
+  phone: 'M5 4h4l2 5-2.5 1.5a11 11 0 005 5L15 13l5 2v4a2 2 0 01-2 2A16 16 0 013 6a2 2 0 012-2z',
+  mail: 'M3 6h18v12H3z M3 7l9 7 9-7',
+  pin: 'M12 21s7-6.2 7-11a7 7 0 10-14 0c0 4.8 7 11 7 11z M12 12a2.5 2.5 0 100-5 2.5 2.5 0 000 5z',
+  clock: 'M12 21a9 9 0 100-18 9 9 0 000 18z M12 7v5l3 2',
+  arrow: 'M5 12h14 M13 6l6 6-6 6',
+  chevron: 'M6 9l6 6 6-6',
+  check: 'M5 12.5l4.5 4.5L19 7.5',
+  star: 'M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z',
+  instagram: 'M7 3h10a4 4 0 014 4v10a4 4 0 01-4 4H7a4 4 0 01-4-4V7a4 4 0 014-4z M12 16.5a4.5 4.5 0 100-9 4.5 4.5 0 000 9z M17.5 6.5v.01',
+  facebook: 'M14 8h3V4h-3a4 4 0 00-4 4v3H7v4h3v6h4v-6h3l1-4h-4V8z',
+  receipt: 'M6 3h12v18l-3-2-3 2-3-2-3 2z M9 8h6 M9 12h6',
+} as const;
+interface Props { name: keyof typeof paths; size?: number; class?: string }
+const { name, size = 24, class: cls } = Astro.props;
+---
+<svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class={cls}><path d={paths[name]} /></svg>
